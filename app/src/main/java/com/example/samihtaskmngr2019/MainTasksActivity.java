@@ -1,6 +1,7 @@
 package com.example.samihtaskmngr2019;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -11,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.samihtaskmngr2019.ui.main.MyFragmentsPagerAdapter;
 
@@ -26,6 +28,20 @@ public class MainTasksActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         FloatingActionButton fab = findViewById(R.id.fab);
+
+        SharedPreferences preferences=getSharedPreferences("mypref",MODE_PRIVATE);
+        String key = preferences.getString("key", "");
+        if(key.length()==0)
+        {
+            Toast.makeText(this, "No key found", Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor edit = preferences.edit();
+            edit.putString("key","Hi");
+            edit.apply();
+        }
+        else
+        {
+            Toast.makeText(this, "key:"+key, Toast.LENGTH_SHORT).show();
+        }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

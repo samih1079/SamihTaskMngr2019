@@ -68,8 +68,11 @@ public class TasksAdapter extends ArrayAdapter<MyTask>
         final MyTask myTask = getItem(position);
        // downloadImageUsingPicasso(myTask.getImage(),imageView);
        //downloadImageToMemory(myTask.getImage(),imageView);
-        downloadImageToLocalFile(myTask.getImage(),imageView);
-        //todo טיפול באירוע מחיקה
+        downloadImageToLocalFile(myTask.getImage(),imageView);   //connect item view to data source
+        tvTitle.setText(myTask.getTitle());
+        tvSubject.setText(myTask.getSubject());
+        rbPrio.setRating(myTask.getImportant());
+        cbIsCompleted.setChecked(false);
         cbIsCompleted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -94,11 +97,7 @@ public class TasksAdapter extends ArrayAdapter<MyTask>
         });
 
 
-        //connect item view to data source
-        tvTitle.setText(myTask.getTitle());
-        tvSubject.setText(myTask.getSubject());
-        rbPrio.setRating(myTask.getImportant());
-        cbIsCompleted.setChecked(false);
+
 
 
 

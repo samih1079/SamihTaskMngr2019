@@ -1,8 +1,12 @@
 package com.example.samihtaskmngr2019;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,15 +14,21 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.samihtaskmngr2019.tracking.TrackerService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-
+/**
+ * singnin  in srceeen
+ */
 public class SignInActivity extends AppCompatActivity {
 
+    private static final int PERMISSIONS_REQUEST = 100;
     private EditText etEmail,etPassWord;
     private Button btnLogIN,btnSignUp;
 
@@ -28,13 +38,32 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-//
-//        auth=FirebaseAuth.getInstance();
-//        if(auth.getCurrentUser()!=null && auth.getCurrentUser().getEmail()!=null)
-//        {
-//            Intent intent=new Intent(SignInActivity.this,MainTabsActivity.class);
-//            startActivity(intent);
-//        }
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if(auth.getCurrentUser()!=null && auth.getCurrentUser().getEmail()!=null)
+        {
+            // Check GPS is enabled
+            LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(this, "Please enable location services", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            // Check location permission is granted - if it is, start
+            // the service, otherwise request the permission
+            int permission = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permission == PackageManager.PERMISSION_GRANTED) {
+                startTrackerService();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST);
+            }
+            Intent intent=new Intent(SignInActivity.this,MainTasksActivity.class);
+            startActivity(intent);
+        }
+
 
 
         etEmail=findViewById(R.id .edEmail) ;
@@ -46,7 +75,6 @@ public class SignInActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // كود الانتقال إلى الشاشة الأخرى
                 Intent i=new Intent(getApplicationContext(), SignUpActivity.class);
                 startActivity(i);
             }
@@ -59,7 +87,34 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
     }
+    private void startTrackerService() {
+        Log.d("SRVS","startTrackerService ");
+        Toast.makeText(getApplicationContext(),"startTrackerService", Toast.LENGTH_SHORT).show();
+
+        startService(new Intent(this, TrackerService.class));
+       // finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]
+            grantResults)
+    {
+        if (requestCode == PERMISSIONS_REQUEST && grantResults.length == 1
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Start the service when the permission is granted
+            startTrackerService();
+        } else {
+            finish();
+        }
+    }
+
+
+
 //1
+
+    /**
+     * sdgsgdsgsgsg
+     */
     private void dataHandler()
     {
         String email=etEmail.getText().toString();
@@ -100,7 +155,8 @@ public class SignInActivity extends AppCompatActivity {
 
     private void signIn(String email, String passw) {
         FirebaseAuth auth=FirebaseAuth.getInstance();
-        auth.signInWithEmailAndPassword(email,passw).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        auth.signInWithEmailAndPassword(email,passw).
+                addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful())

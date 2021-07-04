@@ -3,6 +3,7 @@ package com.example.samihtaskmngr2019;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -72,7 +73,17 @@ public class AddTaskActivity extends AppCompatActivity {
         imgBtnl=findViewById(R.id.imgBtn);
         btnUpload=findViewById(R.id.btnUpload);
         //tvImgUrl=findViewById(R.id.tvImgURL);
+        SharedPreferences preferences=getSharedPreferences("mypref",MODE_PRIVATE);
+        String key = preferences.getString("key", "");
+        if(key.length()==0)
+        {
+            Toast.makeText(this, "No key found", Toast.LENGTH_SHORT).show();
 
+        }
+        else
+        {
+            Toast.makeText(this, "key:"+key, Toast.LENGTH_SHORT).show();
+        }
         //upload: 4
         imgBtnl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,42 +235,7 @@ public class AddTaskActivity extends AppCompatActivity {
             }
             else
              uploadImage(toUploadimageUri);
-//            MyTask task=new MyTask();
-//            task.setCreatedAt(new Date());
-//            //task.setDueDate(new Date(date));
-//            task.setText(text);
-//            task.setTitle(title);
-//            task.setImportant(important);
-//            task.setNecessary(necessary);
-//
-//            //get user email to set is as the owner of this task
-//            FirebaseAuth auth = FirebaseAuth.getInstance();
-//            task.setOwner(auth.getCurrentUser().getEmail());
-//// to get the database root reference
-//            DatabaseReference reference= FirebaseDatabase.getInstance().getReference();
-//
-//           //to get uid(universal id)
-//            String key=reference.child("MyTasks").push().getKey();
-//            task.setKey(key);
-//
-//            reference.child("MyTasks").child(key).setValue(task).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    if(task.isSuccessful())
-//                    {
-//                        Toast.makeText(AddTaskActivity.this, "Add Successful", Toast.LENGTH_LONG).show();
-//                        Intent intent=new Intent(getBaseContext(),AddTaskActivity.class);
-//                        startActivity(intent);
-//                    }
-//                    else
-//                    {
-//                        Toast.makeText(AddTaskActivity.this, "Add Faild", Toast.LENGTH_LONG).show();
-//
-//                    }
-//                }
-//            });
-//
-//
+
 
 
         }
@@ -281,7 +257,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
         String key = reference.child("tasks").push().getKey();
         t.setKey(key);
-        reference.child("tasks").child(uid).child(key).setValue(t).addOnCompleteListener(AddTaskActivity.this, new OnCompleteListener<Void>() {
+        reference.child("tasks").child(uid).child(key).setValue(t).
+                addOnCompleteListener(AddTaskActivity.this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
