@@ -74,7 +74,7 @@ public class AllTasksFragment extends Fragment {
         readTasksFromFirebase("");
     }
                         //4 search: add parameter toi search
-    public void readTasksFromFirebase(final String stTosearch)
+    public void readTask    sFromFirebase(final String stTosearch)
     {
         FirebaseDatabase database=FirebaseDatabase.getInstance();//to connect to database
         FirebaseAuth auth=FirebaseAuth.getInstance();//to get current UID
